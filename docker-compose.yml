@@ -1,0 +1,42 @@
+services:
+  # 1. WEB INTERFACE SERVICE
+  app:
+    build:
+      context: .
+      dockerfile: php/Dockerfile
+    container_name: ${PROJECT_NAME}-app
+    restart: unless-stopped
+    command: php -S 0.0.0.0:8080 -t public
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "127.0.0.1:${APP_PORT}:8080"
+    env_file:
+      - .env
+    networks:
+      - bubble-net
+
+  # 2. BACKEND WORKER SERVICE
+  worker:
+    build:
+      context: .
+      dockerfile: php/Dockerfile
+    container_name: ${PROJECT_NAME}-worker
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${WORKER_PORT}:8081"
+    # Launch the PHP WebSocket server
+    command: php src/server.php
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - .env
+    networks:
+      - bubble-net
+    # Mapping Docker group ID for non-root user (production security)
+    group_add:
+      - "${DOCKER_GID:-999}"
+
+networks:
+  bubble-net:
+    driver: bridge

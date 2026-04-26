@@ -1,0 +1,97 @@
+/* CloudSidebar Styles */
+#sidebar {
+    position: absolute;
+    top: 0;
+    right: -380px;
+    width: 370px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(255, 255, 255, 0.6);
+    transition: right 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 150;
+    padding: 60px 15px 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05);
+}
+
+#sidebar.open {
+    right: 0;
+}
+
+/* Sidebar Action Buttons */
+.item-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.btn-action {
+    border: none;
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+    color: white;
+}
+
+.btn-start {
+    background: #2ed573;
+    box-shadow: 0 2px 5px rgba(46, 213, 115, 0.3);
+}
+
+.btn-start:hover {
+    background: #26b963;
+    transform: scale(1.05);
+}
+
+.btn-stop {
+    background: #ffa502;
+    box-shadow: 0 2px 5px rgba(255, 165, 2, 0.3);
+}
+
+.btn-stop:hover {
+    background: #eccc68;
+    transform: scale(1.05);
+}
+
+.btn-rm:hover {
+    background: #ff4757;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(255, 107, 129, 0.4);
+}
+
+/* Custom Project Action Buttons */
+.btn-restart {
+    background: #3498db;
+    box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+}
+
+.btn-restart:hover {
+    background: #2980b9;
+    transform: scale(1.05);
+}
+
+.btn-rebuild {
+    background: #8e44ad;
+    box-shadow: 0 2px 5px rgba(142, 68, 173, 0.3);
+}
+
+.btn-rebuild:hover {
+    background: #9b59b6;
+    transform: scale(1.05);
+}
+
+/* Highlighting self containers */
+.list-item.item-self {
+    background: rgba(230, 245, 255, 0.6);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.08);
+}
+
+.list-item.item-self:hover {
+    background: rgba(230, 245, 255, 0.85);
+}

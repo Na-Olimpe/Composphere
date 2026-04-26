@@ -1,0 +1,162 @@
+/* 🌊 Water Console Styles */
+#water-console {
+    position: absolute;
+    bottom: -45vh;
+    left: 0;
+    width: 100vw;
+    height: 45vh;
+    background: linear-gradient(to bottom, rgba(135, 206, 235, 0.4) 0%, rgba(255, 255, 255, 0.95) 20%, rgba(255, 255, 255, 1) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: bottom 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 250;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+    padding: 30px 20px 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    box-shadow: 0 -10px 30px rgba(0, 150, 255, 0.1);
+}
+
+#water-console.open {
+    bottom: 0;
+}
+
+#water-surface {
+    position: absolute;
+    top: -19px;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.wave {
+    position: absolute;
+    bottom: 0;
+    width: 200%;
+    height: 20px;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 20" preserveAspectRatio="none"><path d="M0,20 L0,10 Q100,0 200,10 T400,20 T600,10 T800,20 L800,20 Z" fill="rgba(135, 206, 235, 0.4)"/></svg>') repeat-x;
+    background-size: 400px 20px;
+    animation: wave-roll 10s linear infinite;
+}
+
+.wave:nth-child(2) {
+    bottom: 0;
+    opacity: 0.6;
+    animation: wave-roll 6s linear infinite reverse;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 20" preserveAspectRatio="none"><path d="M0,20 L0,5 Q100,20 200,5 T400,20 T600,5 T800,20 L800,20 Z" fill="rgba(100, 180, 235, 0.5)"/></svg>') repeat-x;
+    background-size: 400px 20px;
+}
+
+@keyframes wave-roll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-400px); }
+}
+
+#console-controls {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+    position: relative;
+    padding: 0 10px;
+}
+
+.tab-button {
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 13px;
+    color: #0077b6;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 150, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 10;
+}
+
+#tab-logs { margin-right: 15px; }
+#tab-terminal { margin-left: 15px; margin-right: auto; }
+
+.tab-button:hover {
+    background: rgba(255, 255, 255, 0.7);
+    transform: translateY(-2px);
+}
+
+.tab-button.active {
+    background: linear-gradient(135deg, #0077b6, #00b4d8);
+    color: white;
+    border-color: #00b4d8;
+    box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+}
+
+.close-console {
+    background: rgba(135, 206, 235, 0.3);
+    border: 1px solid rgba(0, 150, 255, 0.3);
+    border-radius: 6px;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #0077b6;
+    transition: all 0.2s;
+    position: absolute;
+    right: 10px;
+}
+
+.close-console:hover {
+    background: #ff4757;
+    color: white;
+    border-color: #ff4757;
+}
+
+#console-content {
+    display: flex;
+    width: 100%;
+    height: calc(100% - 40px);
+    gap: 15px;
+}
+
+.pane {
+    height: 100%;
+    overflow-y: auto;
+    border-radius: 8px;
+}
+
+#console-content.show-logs-only #logs-pane { flex: 1; opacity: 1; display: block; }
+#console-content.show-logs-only #terminal-pane { flex: 0; opacity: 0; display: none; }
+#console-content.show-terminal-only #logs-pane { flex: 0; opacity: 0; display: none; }
+#console-content.show-terminal-only #terminal-pane { flex: 1; opacity: 1; display: flex; flex-direction: column; }
+#console-content.show-both #logs-pane { flex: 1; opacity: 1; display: block; border-right: 1px solid rgba(0, 0, 0, 0.1); padding-right: 15px; }
+#console-content.show-both #terminal-pane { flex: 1; opacity: 1; display: flex; flex-direction: column; }
+
+#console-logs { color: #333; line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
+
+#terminal-pane {
+    background: #0c0c0c; /* Deep black for contrast */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+    padding: 0; /* Xterm manages its own padding */
+    overflow: hidden !important; /* Prevent double scrollbars */
+}
+
+#terminal-container {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* Xterm appearance settings */
+.xterm .xterm-viewport {
+    background-color: transparent !important;
+}
+
+.xterm-main-slot {
+    font-family: 'Consolas', 'Courier New', monospace !important;
+}

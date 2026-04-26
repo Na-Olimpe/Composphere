@@ -1,0 +1,12 @@
+{
+    "require": {
+        "react/http": "^1.11",
+        "react/socket": "^1.17",
+        "cboden/ratchet": "^0.4.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Composphere\\": "src/"
+        }
+    }
+}

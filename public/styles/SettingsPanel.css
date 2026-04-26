@@ -1,0 +1,105 @@
+/* Settings Panel Styles */
+#settings-toggle {
+    right: 40px;
+    bottom: -30px;
+    top: auto;
+    z-index: 100;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 7px;
+    transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), background 0.3s, box-shadow 0.3s;
+}
+
+#settings-toggle:hover {
+    bottom: -10px;
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 0 20px rgba(100, 180, 255, 0.2), 0 0 15px rgba(100, 180, 255, 0.3);
+    border-color: rgba(100, 180, 255, 0.5);
+}
+
+#settings-panel {
+    position: absolute;
+    right: 40px;
+    bottom: 80px;
+    width: 240px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    padding: 20px;
+    z-index: 140;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#settings-panel.open {
+    display: flex;
+}
+
+.settings-title {
+    font-weight: bold;
+    font-size: 16px;
+    color: #444;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding-bottom: 10px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #555;
+    font-size: 14px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input { opacity: 0; width: 0; height: 0; }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px; width: 18px;
+    left: 3px; bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider { background-color: #0077b6; }
+input:checked+.slider:before { transform: translateX(20px); }
+
+.range-slider {
+    width: 100%;
+    height: 6px;
+    background: #ddd;
+    border-radius: 5px;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #0077b6;
+    border-radius: 50%;
+    cursor: pointer;
+}

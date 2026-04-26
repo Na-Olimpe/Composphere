@@ -1,0 +1,232 @@
+:root {
+    --sky-alpha-nw: 0.3;
+    --sky-alpha-se: 0.1;
+    --bg-color-nw: rgba(0, 180, 255, var(--sky-alpha-nw));
+    --bg-color-se: rgba(0, 100, 255, var(--sky-alpha-se));
+    --bg-base: #fff;
+}
+
+body.night-mode {
+    --bg-color-nw: color-mix(in srgb, rgba(0, 10, 30, 0.95) calc(var(--sky-val) * 1%), rgba(0, 180, 255, 0.48));
+    --bg-color-se: color-mix(in srgb, rgba(2, 20, 60, 0.8) calc(var(--sky-val) * 1%), rgba(0, 100, 255, 0.15));
+    --bg-base: color-mix(in srgb, #00020a calc(var(--sky-val) * 1%), transparent);
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: transparent;
+    font-family: sans-serif;
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(at 20% 20%, var(--bg-color-nw) 0%, transparent 70%),
+        radial-gradient(at 80% 80%, var(--bg-color-se) 0%, transparent 50%),
+        var(--bg-base);
+    transition: background 1.5s ease-in-out;
+    z-index: -1;
+}
+
+canvas {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#app-canvas {
+    z-index: 1;
+    pointer-events: none;
+}
+
+#canvas {
+    z-index: 2;
+}
+
+/* Tooltip Control */
+#controls {
+    position: absolute;
+    display: none;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    backdrop-filter: blur(10px);
+    text-align: center;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Shared Bubble Toggle Styles */
+.bubble-toggle {
+    position: absolute;
+    top: -30px;
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.3), 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: top 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.bubble-toggle::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    z-index: -1;
+}
+
+.bubble-toggle:hover {
+    top: 15px;
+    transform: scale(1.05);
+}
+
+.toggle-icon {
+    font-size: 28px;
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transform: translateY(12px);
+}
+
+.bubble-toggle:hover .toggle-icon {
+    transform: translateY(0px);
+}
+
+/* Common Sidebar Elements used across sidebars */
+.sidebar-title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar-logo {
+    max-width: 95%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 75%);
+    mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 75%);
+    filter: drop-shadow(0 4px 15px rgba(0, 150, 255, 0.2));
+    transition: transform 0.3s;
+}
+
+.sidebar-logo:hover {
+    transform: scale(1.05);
+}
+
+.list-item {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s, background 0.2s;
+}
+
+.list-item:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.item-name {
+    font-weight: bold;
+    color: #2f3542;
+    font-size: 0.85rem;
+    word-break: break-all;
+}
+
+.item-status {
+    font-size: 0.75rem;
+    color: #747d8c;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-dot.running {
+    background: #2ed573;
+    box-shadow: 0 0 8px #2ed573;
+}
+
+.status-dot.exited {
+    background: #ff4757;
+}
+
+#sun-toggle {
+    left: 40px;
+}
+
+#sun-toggle:hover {
+    background: rgba(255, 250, 230, 0.3);
+    box-shadow: inset 0 0 20px rgba(255, 200, 0, 0.2), 0 0 15px rgba(255, 165, 0, 0.3);
+    border-color: rgba(255, 200, 0, 0.5);
+}
+
+#cloud-toggle {
+    right: 40px;
+}
+
+#cloud-toggle:hover {
+    background: rgba(230, 245, 255, 0.3);
+    box-shadow: inset 0 0 20px rgba(100, 180, 255, 0.2), 0 0 15px rgba(100, 180, 255, 0.3);
+    border-color: rgba(100, 180, 255, 0.5);
+}
+
+#sun-sidebar {
+    position: absolute;
+    top: 0;
+    left: -380px;
+    width: 370px;
+    height: 100vh;
+    background: rgba(255, 250, 240, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 255, 255, 0.8);
+    transition: left 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 150;
+    padding: 60px 15px 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    box-shadow: 10px 0 30px rgba(255, 170, 0, 0.05);
+}
+
+#sun-sidebar.open {
+    left: 0;
+}

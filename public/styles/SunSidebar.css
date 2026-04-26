@@ -1,0 +1,80 @@
+/* SunSidebar Styles */
+.sun-row {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+}
+
+.sun-row.active {
+    border-color: rgba(255, 170, 0, 0.3);
+    background: rgba(255, 253, 246, 0.8);
+}
+
+.sun-row.offline {
+    border-color: rgba(100, 110, 160, 0.3);
+    background: rgba(240, 242, 250, 0.8);
+}
+
+.item-info-wrapper {
+    width: 100%;
+}
+
+.sun-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.sun-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.sun-row.active .sun-name { color: #d35400; }
+.sun-row.offline .sun-name { color: #4b6584; }
+
+.sun-status {
+    font-weight: bold;
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.sun-row.active .sun-status {
+    color: #2ed573;
+    background: rgba(46, 213, 115, 0.1);
+}
+
+.sun-row.offline .sun-status {
+    color: #95a5a6;
+    background: transparent;
+}
+
+.sun-stats {
+    font-size: 0.85rem;
+    color: #555;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sun-stats-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sun-stats-row.cpu-net {
+    border-bottom: 1px dashed rgba(0,0,0,0.05);
+    padding-bottom: 4px;
+}
+
+.sun-stats-row.ram {
+    padding-top: 2px;
+}
+
+.cpu-val { color: #e74c3c; font-weight: bold; }
+.net-val { color: #2980b9; font-weight: bold; }
+
+.ram-normal { color: #8e44ad; }
+.ram-critical { color: #e74c3c; }

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Composphere</title>
+    <!-- Bubbles SVG Favicon -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🫧</text></svg>">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/SunSidebar.css">
+    <link rel="stylesheet" href="styles/CloudSidebar.css">
+    <link rel="stylesheet" href="styles/WaterConsole.css">
+    <link rel="stylesheet" href="styles/SettingsPanel.css">
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+
+    <!-- 📟 Xterm.js for interactive terminal -->
+    <link rel="stylesheet" href="https://unpkg.com/xterm@5.3.0/css/xterm.css" />
+    <script src="https://unpkg.com/xterm@5.3.0/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+</head>
+
+<body>
+    <div id="sun-toggle" class="bubble-toggle">
+        <span class="toggle-icon">☀️</span>
+    </div>
+    <div id="sun-sidebar">
+        <div class="sidebar-title">
+            <img src="pic-yellow.png" alt="Composphere" class="sidebar-logo">
+        </div>
+        <div id="sun-sidebar-list"></div>
+    </div>
+
+    <div id="cluster-toggle" class="bubble-toggle" style="left: 50%; transform: translateX(-50%);">
+        <span class="toggle-icon">🌐</span>
+    </div>
+
+    <div id="cloud-toggle" class="bubble-toggle">
+        <span class="toggle-icon">☁️</span>
+    </div>
+
+    <div id="sidebar">
+        <div class="sidebar-title">
+            <img src="pic-blue.png" alt="Composphere" class="sidebar-logo">
+        </div>
+        <div id="sidebar-list"></div>
+    </div>
+
+    <div id="controls">
+        <div id="c-name" style="font-weight: bold; margin-bottom: 5px; color: #333;"></div>
+        <div id="btn-container"></div>
+    </div>
+
+    <!-- 🌊 Ocean Water Console -->
+    <div id="water-console">
+        <div id="water-surface">
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+
+        <!-- Floating Cloud Controls -->
+        <div id="console-controls">
+            <div class="tab-button" id="tab-logs">Logs</div>
+            <span id="console-title-text"
+                style="color: #0077b6; font-weight: bold; font-family: sans-serif; position: absolute; left: 50%; transform: translateX(-50%);">🌊
+                Diving into: ~</span>
+            <div class="tab-button" id="tab-terminal">Console</div>
+            <button class="close-console">Close</button>
+        </div>
+
+        <div id="console-content" class="show-logs-only">
+            <!-- Left Pane: Logs -->
+            <div id="logs-pane" class="pane">
+                <div id="console-logs"></div>
+            </div>
+
+            <!-- Right Pane: Interactive Terminal (Xterm) -->
+            <div id="terminal-pane" class="pane">
+                <div id="terminal-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🛠️ Settings & Preferences -->
+    <div id="settings-toggle" class="bubble-toggle">
+        <span class="toggle-icon">⚙️</span>
+    </div>
+
+    <div id="settings-panel">
+        <div class="settings-title">Preferences</div>
+        
+        <div class="setting-item">
+            <label>High-Load Alerts</label>
+            <label class="switch">
+                <input type="checkbox" id="alert-toggle" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <div class="setting-item">
+            <label>RAM Liquid Level</label>
+            <label class="switch">
+                <input type="checkbox" id="liquid-toggle">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <div class="setting-item">
+            <label>Sound Effects</label>
+            <label class="switch">
+                <input type="checkbox" id="sound-toggle">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <div class="setting-item">
+            <label>Deep Sea Mode</label>
+            <label class="switch">
+                <input type="checkbox" id="night-toggle">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <div class="setting-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+            <label>Sky Saturation</label>
+            <input type="range" id="sky-brightness" min="0" max="100" value="30" class="range-slider">
+        </div>
+
+        <div style="border-top: 1px solid rgba(0,0,0,0.05); margin-top: 5px; padding-top: 15px;">
+            <div class="setting-item" style="opacity: 0.6; cursor: help;" title="Available in Composphere Cloud">
+                <label>Cloud Sync <span style="background: #ffa502; color: white; padding: 1px 5px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">PRO</span></label>
+                <label class="switch" style="pointer-events: none;">
+                    <input type="checkbox" disabled>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="setting-item" style="opacity: 0.6; cursor: help; margin-top: 10px;" title="Available in Composphere Cloud">
+                <label>Multi-Host <span style="background: #ffa502; color: white; padding: 1px 5px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">PRO</span></label>
+                <label class="switch" style="pointer-events: none;">
+                    <input type="checkbox" disabled>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+
+        <button id="save-settings" style="display:none;">Save</button>
+    </div>
+
+    <canvas id="app-canvas"
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+
+    <canvas id="canvas"></canvas>
+
+    <script type="module" src="app_3d.js?v=8"></script>
+</body>
+
+</html>
