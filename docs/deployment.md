@@ -36,26 +36,21 @@ File: `.env` (copy from `.env.example`)
 | Variable | Default | Description |
 |---|---|---|
 | `COMPOSE_PROJECT_NAME` | `composphere` | Official Docker Compose project name |
-| `PROJECT_NAME` | `composphere` | Custom prefix for container naming |
-| `APP_PORT` | `22414` | Port for the web UI (PHP built-in) |
-| `WORKER_PORT` | `22415` | Port for the WebSocket worker |
+| `APP_PORT` | `22414` | Port for the Web UI (ReactPHP Static Server) |
+| `WORKER_PORT` | `22415` | Port for the WebSocket server |
 | `DOCKER_GID` | `999` | GID of the host's docker group for socket access |
 
 ---
 
 ## Services (docker-compose.yml)
 
-### `app`
-- Serves the static frontend from `./public` via PHP built-in server on port `8080`
-- Mounts `docker.sock` (read access only needed, but currently mounted rw)
+### `composphere`
+- Serves the static frontend from `./public` via a high-performance ReactPHP HTTP server on port `8080`.
+- Runs the async WebSocket + Docker API server on port `8081`.
+- Mounts `docker.sock` to stream container metrics and execute commands.
 - Image: custom PHP CLI (`php/Dockerfile`)
 
-### `worker`
-- Runs `php server.php` — the async WebSocket + Docker API server
-- Exposes port `8081` (mapped to `WORKER_PORT`)
-- Must have read/write access to `docker.sock` to send commands
-
-Both services share the `bubble-net` bridge network.
+The service runs entirely asynchronously in a single PHP process, completely eliminating the need for separate containers or built-in development servers.
 
 ---
 
@@ -106,8 +101,8 @@ docker compose build --no-cache
 │   ├── AudioManager.js     ← Web Audio engine
 │   ├── SettingsPanel.js    ← Local preferences
 │   └── pic-blue.png        ← Environment map
-├── src/                    ← PHP Backend (ReactPHP worker)
-│   ├── server.php          ← WebSocket entry point
+├── src/                    ← PHP Backend (ReactPHP Web & WebSocket Servers)
+│   ├── server.php          ← Server entry point
 │   ├── Core/               ← System logic (Docker API)
 │   └── vendor/             ← Dependencies
 ├── .env.example            ← Template for configuration
@@ -127,7 +122,7 @@ On many systems, you can achieve this by adding the host's `docker` group GID to
 ```yaml
 # docker-compose.yml
 services:
-  worker:
+  composphere:
     group_add:
       - "${DOCKER_GID:-999}"
 ```
@@ -139,15 +134,14 @@ To find your GID, run: `getent group docker | cut -d: -f3`
 ## Troubleshooting
 
 ### WebSocket not connecting
-- Ensure the `worker` container is running: `docker compose ps`
-- Check worker logs: `docker compose logs worker`
-- Confirm `WORKER_PORT` in `.env` matches the port in the frontend WebSocket URL (`ws://localhost:22415`)
+- Ensure the `composphere` container is running: `docker compose ps`
+- Check container logs: `docker compose logs composphere`
+- Confirm `WORKER_PORT` in `.env` matches your environment (the port is dynamically injected into the frontend, so no hardcoding is needed).
 
 ### No containers appear
-- Verify `docker.sock` is mounted in the worker container
-- The worker must run as a user with permission to read the socket
-  (or socket permissions allow group access)
+- Verify `docker.sock` is mounted in the `composphere` container.
+- The container must run as a user with permission to read the socket (or socket permissions allow group access).
 
 ### Blank page / JS errors
-- Open DevTools → Console for errors
-- Make sure `APP_PORT` in `.env` points correctly and the built-in PHP server is serving `public/`
+- Open DevTools → Console for errors.
+- Make sure `APP_PORT` in `.env` points correctly and the ReactPHP HTTP server is running.

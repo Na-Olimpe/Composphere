@@ -27,22 +27,25 @@ as animated 3D soap bubbles using a PHP async backend and a Vanilla JS + Three.j
 │  │   Three.js 3D canvas · Molecule grouping · Particle FX    │  │
 │  └──────────────────────────┬────────────────────────────────┘  │
 └─────────────────────────────│───────────────────────────────────┘
-                              │ WebSocket  ws://localhost:22415
+                              │ HTTP :8080 & WebSocket :8081
 ┌─────────────────────────────▼───────────────────────────────────┐
-│                        WORKER (PHP)                             │
+│                     COMPOSPHERE (PHP Container)                 │
 │                                                                 │
 │  ┌─────────────────────────────────────────────────────────┐    │
 │  │                      server.php                         │    │
 │  │               Bootstrap · Wiring · Loop                 │    │
 │  │                                                         │    │
 │  │  ┌───────────────┐  ┌───────────────┐  ┌──────────────┐ │    │
-│  │  │ BubbleServer  │  │ DockerClient  │  │ EventManager │ │    │
-│  │  │  (Ratchet WS) │  │ (react/http)  │  │ (stream evts)│ │    │
-│  │  └───────────────┘  └───────┬───────┘  └───────┬──────┘ │    │
-│  └──────────────────────────── │ ──────────────── │ ───────┘    │
-│                                │ Unix Socket      │             │
-│                           /var/run/docker.sock                  │
-└─────────────────────────────────────────────────────────────────┘
+│  │  │ BubbleServer  │  │ ReactPHP HTTP │  │ EventManager │ │    │
+│  │  │  (Ratchet WS) │  │(Static Assets)│  │ (stream evts)│ │    │
+│  │  └──────┬────────┘  └───────┬───────┘  └───────┬──────┘ │    │
+│  └──────── │ ───────────────── │ ──────────────── │ ───────┘    │
+│            │                   │ Unix Socket      │             │
+│            │              /var/run/docker.sock                  │
+└────────────│────────────────────────────────────────────────────┘
+             │
+             └─→ Docker API (GET /containers/json)
+
 ```
 
 ## Data Flow
@@ -69,6 +72,7 @@ Docker Daemon
 | Decision | Rationale |
 |---|---|
 | **ReactPHP async loop** | Docker stats API is slow (each call blocks); async allows parallel fetching for all containers without threading |
+| **Unified Container** | Frontend static assets and backend WebSocket logic are served by the same ReactPHP event loop on different ports, reducing footprint |
 | **Cache-then-update pattern** | `cpuCache` stores last known value; new WebSocket clients get data instantly without waiting for next poll |
 | **Dual-canvas rendering** | `#app-canvas` (WebGL/Three.js) is `pointer-events: none`; `#canvas` (2D) handles all mouse events and text overlay |
 | **No bundler (Vite/Webpack)** | Three.js is loaded via ES6 importmap from CDN — zero build step, fast iteration |
@@ -78,5 +82,5 @@ Docker Daemon
 
 | Service | Internal | External (`.env`) |
 |---|---|---|
-| Web UI (PHP built-in) | `8080` | `APP_PORT` (default `22414`) |
-| WebSocket Worker | `8081` | `WORKER_PORT` (default `22415`) |
+| Web UI (ReactPHP Static Server) | `8080` | `APP_PORT` (default `22414`) |
+| WebSocket Server | `8081` | `WORKER_PORT` (default `22415`) |
