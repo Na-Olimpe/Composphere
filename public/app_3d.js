@@ -232,20 +232,7 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-if (!socket || socket.readyState !== WebSocket.OPEN) {
-    setTimeout(() => {
-        if (bubbles.length === 0) {
-            const env = { canvas, ctx, scene, geometry };
-            bubbles.push(new Bubble({ Id: '1', Names: ['/pangolin'], State: 'running', cpu_usage: '4.5%', ram_stats: { percent: '12.5%' }, networks: ['backend'], compose_project: 'my-app' }, env));
-            bubbles.push(new Bubble({ Id: '2', Names: ['/traefik'], State: 'running', cpu_usage: '12.1%', ram_stats: { percent: '45.0%' }, networks: ['backend', 'frontend'], compose_project: 'infrastructure' }, env));
-            bubbles.push(new Bubble({ Id: '3', Names: ['/hello-world-test'], State: 'running', cpu_usage: '2.0%', ram_stats: { percent: '5.2%' }, networks: ['frontend'], compose_project: 'my-app' }, env));
-            bubbles.push(new Bubble({ Id: '4', Names: ['/newt'], State: 'exited', cpu_usage: '0.0%', ram_stats: { percent: '0%' }, networks: ['backend'], compose_project: null }, env));
-            bubbles.push(new Bubble({ Id: '5', Names: ['/composphere-worker'], State: 'running', cpu_usage: '2.0%', ram_stats: { percent: '85.0%' }, networks: ['frontend'], compose_project: 'composphere' }, env));
-            bubbles.push(new Bubble({ Id: '6', Names: ['/gerbil'], State: 'running', cpu_usage: '2.0%', ram_stats: { percent: '30.1%' }, networks: ['frontend'], compose_project: 'infrastructure' }, env));
-            bubbles.push(new Bubble({ Id: '7', Names: ['/composphere-app'], State: 'running', cpu_usage: '0.0%', ram_stats: { percent: '65.2%' }, networks: ['frontend'], compose_project: 'composphere' }, env));
-        }
-    }, 1500);
-}
+
 
 animate();
 
