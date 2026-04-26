@@ -54,11 +54,51 @@ $loop->addPeriodicTimer(3.0, function () use ($dockerService) {
     $dockerService->broadcastState();
 });
 
-// --- 4. START WEB SERVER ---
+// --- 4. START SERVERS ---
+
+// WebSocket Server (Port 8081)
 $socket = new SocketServer('0.0.0.0:8081', [], $loop);
 $server = new IoServer(new HttpServer(new WsServer($app)), $socket, $loop);
+echo "🏁 WebSocket Server started on port 8081...\n";
 
-echo "🏁 Server started on port 8081...\n";
+// HTTP Static Server (Port 8080)
+$staticHandler = function (\Psr\Http\Message\ServerRequestInterface $request) {
+    $path = $request->getUri()->getPath();
+    if ($path === '/' || $path === '') {
+        $path = '/index.html';
+    }
+    
+    $path = str_replace(['../', '..\\'], '', $path);
+    $publicDir = realpath(__DIR__ . '/../public');
+    $file = realpath($publicDir . $path);
+    
+    if (!$file || strpos($file, $publicDir) !== 0 || !is_file($file)) {
+        return new \React\Http\Message\Response(404, ['Content-Type' => 'text/plain'], "Not found");
+    }
+    
+    $ext = pathinfo($file, PATHINFO_EXTENSION);
+    $mimeTypes = [
+        'html' => 'text/html',
+        'css'  => 'text/css',
+        'js'   => 'application/javascript',
+        'png'  => 'image/png',
+        'svg'  => 'image/svg+xml'
+    ];
+    $contentType = $mimeTypes[$ext] ?? 'application/octet-stream';
+    $content = file_get_contents($file);
+    
+    if ($path === '/index.html') {
+        $port = getenv('WORKER_PORT') ?: '22415';
+        $content = str_replace('{{WORKER_PORT}}', $port, $content);
+    }
+    
+    return new \React\Http\Message\Response(200, ['Content-Type' => $contentType], $content);
+};
+
+$httpSocket = new SocketServer('0.0.0.0:8080', [], $loop);
+$httpServer = new \React\Http\HttpServer($loop, $staticHandler);
+$httpServer->listen($httpSocket);
+echo "🌐 HTTP Static Server started on port 8080...\n";
 
 // --- 5. GRACEFUL SHUTDOWN (Signal Handling) ---
 // Requires pcntl extension. Stops the loop immediately on SIGTERM/SIGINT.

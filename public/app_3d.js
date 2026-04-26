@@ -1,12 +1,12 @@
-import { SettingsPanel } from './SettingsPanel.js';
+import { SettingsPanel } from './SettingsPanel.js?v=9';
 
 import * as THREE from 'three';
-import { CloudSidebar } from './CloudSidebar.js';
-import { SunSidebar } from './SunSidebar.js';
-import { WaterConsole } from './WaterConsole.js';
-import { Bubble } from './SoapBubble.js';
-import { MoleculesEngine } from './Molecules.js';
-import { AudioManager } from './AudioManager.js';
+import { CloudSidebar } from './CloudSidebar.js?v=9';
+import { SunSidebar } from './SunSidebar.js?v=9';
+import { WaterConsole } from './WaterConsole.js?v=9';
+import { Bubble } from './SoapBubble.js?v=9';
+import { MoleculesEngine } from './Molecules.js?v=9';
+import { AudioManager } from './AudioManager.js?v=9';
 
 // --- THREE.JS SETUP ---
 const appCanvas = document.getElementById('app-canvas');
@@ -29,7 +29,8 @@ const controls = document.getElementById('controls');
 let socket;
 try {
     const wsHost = window.location.hostname || 'localhost';
-    socket = new WebSocket(`ws://${wsHost}:22415`);
+    const wsPort = window.COMPOSPHERE_WS_PORT || '22415';
+    socket = new WebSocket(`ws://${wsHost}:${wsPort}`);
 } catch (e) {
     console.warn("Failed to connect websocket", e);
 }
@@ -44,9 +45,25 @@ const audioManager = new AudioManager(settings);
 
 // Cluster Upsell listener
 const clusterToggle = document.getElementById('cluster-toggle');
-if (clusterToggle) {
+const proModal = document.getElementById('pro-modal');
+const proModalClose = document.getElementById('pro-modal-close');
+
+if (clusterToggle && proModal) {
     clusterToggle.addEventListener('click', () => {
-        alert("🌐 Composphere Pro Feature\n\nMulti-host synchronization and Cloud management are available in the Pro version. Support the project to unlock cluster features!");
+        proModal.classList.add('show');
+    });
+
+    proModalClose.addEventListener('click', () => {
+        proModal.classList.remove('show');
+    });
+
+    // Make settings PRO items clickable to show modal too
+    document.querySelectorAll('[title="Available in Composphere Cloud"]').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', (e) => {
+            e.preventDefault();
+            proModal.classList.add('show');
+        });
     });
 }
 
@@ -250,7 +267,7 @@ canvas.addEventListener('mousedown', (e) => {
             draggedBubble = b;
             b.isDragged = true;
             b.vx = 0; b.vy = 0;
-            
+
             audioManager.playBlup(); // Bubble selection sound
 
             controls.style.display = 'block';

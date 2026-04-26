@@ -49,12 +49,11 @@ export class CloudSidebar {
         containersData.forEach(c => {
             let name = c.Names && c.Names[0] ? c.Names[0].replace('/', '') : 'Unknown';
             const isRunning = c.State === 'running';
-            const isSelf = c.Labels && c.Labels['com.docker.compose.project'] === 'composphere';
+            const isSelf = c.Labels && c.Labels['composphere.core'] === 'true';
             
             // Visual rebranding for internal services
             if (isSelf) {
-                if (name.endsWith('-app')) name = 'Dashboard';
-                else if (name.endsWith('-worker')) name = 'Engine';
+                name = 'Composphere';
             }
             
             let actionButtons = '';

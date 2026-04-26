@@ -32,7 +32,7 @@ class DockerService
                 "AttachStdout" => true,
                 "AttachStderr" => true,
                 "Tty" => true,
-                "Cmd" => ["sh"] // Start a shell for interactive use
+                "Cmd" => ["sh", "-c", "command -v bash >/dev/null 2>&1 && exec bash || exec sh"] // Fallback mechanism: bash then sh
             ]);
 
             $this->docker->request('POST', "/containers/$id/exec", $payload)->then(

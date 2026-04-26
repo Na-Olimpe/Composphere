@@ -299,9 +299,9 @@ export class Bubble {
         this.netSpeed = c.net_speed || 0;
         this.composeProject = c.compose_project || null;
 
-        if (this.composeProject === 'composphere') {
-            if (this.name.endsWith('-app')) this.name = 'Dashboard';
-            else if (this.name.endsWith('-worker')) this.name = 'Engine';
+        const isSelf = c.Labels && c.Labels['composphere.core'] === 'true';
+        if (isSelf) {
+            this.name = 'Composphere';
         }
 
         if (c.ram_stats) {
